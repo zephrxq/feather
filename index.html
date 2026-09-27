@@ -1,0 +1,24 @@
+<canvas id="c">
+<style>
+body{margin:0}
+canvas{width:100vw;height:100vh}
+</style>
+<script>
+let c=document.querySelector("#c"),x=c.getContext("2d"),d=devicePixelRatio
+let k={x:{"ArrowLeft":-1,a:-1,d:1,"ArrowRight":1},y:{"ArrowUp":-1,w:-1,s:1,"ArrowDown":1}}
+c.width=innerWidth*d
+c.height=innerHeight*d
+xy=[0,0]
+x.scale(d,d)
+let r=()=>{
+x.clearRect(0,0,c.width,c.height)
+x.fillRect(...xy,150,100)
+requestAnimationFrame(r)
+}
+r()
+document.addEventListener("keydown",(e)=>{
+    xy[0]+=k.x[e.key]||0
+    xy[1]+=k.y[e.key]||0
+    console.log(xy)
+})
+</script>
