@@ -1,41 +1,25 @@
-<canvas id="c">
-<style>
-body{margin:0}
-canvas{width:100vw;height:100vh;background-color:rgb(24, 24, 30)}
-</style>
-<script>
-let c=document.querySelector("#c"),x=c.getContext("2d"),d=devicePixelRatio*2,k={"w":0,"a":0,"s":0,"d":0},posl=5,pos=Array.from({length:posl},()=>[0,0]),v=[0,0]
-const C={ac:5,dc:4.5,mv:15}
+<canvas id="c"><style>body{margin:0}canvas{width:100vw;height:100vh;background-color:rgb(24, 24, 30)}</style><script>let c=document.querySelector("#c"),x=c.getContext("2d"),d=devicePixelRatio*2,k={"w":0,"a":0,"s":0,"d":0},posl=5,pos=Array.from({length:posl},()=>[0,0]),v=[0,0],lt=performance.now()
+const C={ac:3000,dc:3000,mv:750}
 c.width=innerWidth*d
 c.height=innerHeight*d
 x.scale(d,d)
 let cl=(v,mn,mx)=>Math.min(Math.max(v,mn),mx)
-let r=()=>{
-let mvt=[k.d-k.a,k.s-k.w],l=Math.hypot(...mvt)
-if(l){mvt[0]/=l;mvt[1]/=l;v[0]=cl(v[0]+mvt[0]*C.ac,-C.mv,C.mv);v[1]=cl(v[1]+mvt[1]*C.ac,-C.mv,C.mv)}
-pos.push([pos[posl-1][0]+v[0],pos[posl-1][1]+v[1]])
-pos.shift()
+let r=(t)=>{let dt=(t-lt)/1000,mvt=[k.d-k.a,k.s-k.w],l=Math.hypot(...mvt)
+lt=t
+if(l){mvt[0]/=l;mvt[1]/=l;v[0]=cl(v[0]+mvt[0]*C.ac*dt,-C.mv,C.mv);v[1]=cl(v[1]+mvt[1]*C.ac*dt,-C.mv,C.mv)}
 let sp=Math.hypot(...v)
-if(sp){
-let ns=Math.max(sp-C.dc,0)
-v[0]*=ns/sp
-v[1]*=ns/sp
-}
+if(sp){let ns=Math.max(sp-C.dc*dt,0)
+if(!mvt[0])v[0]*=ns/sp
+if(!mvt[1])v[1]*=ns/sp}
+pos.push([pos[posl-1][0]+v[0]*dt,pos[posl-1][1]+v[1]*dt])
+pos.shift()
 x.clearRect(0,0,innerWidth,innerHeight)
-pos.forEach((p,i)=>{
-x.beginPath()
+pos.forEach((p,i)=>{x.beginPath()
 x.arc(...p,50,0,Math.PI*2)
 x.fillStyle=i+1==posl?"#3498db":`rgba(255,255,255,${1/(posl-i)})`
 x.fill()
-x.closePath()
-})
-requestAnimationFrame(r)
-}
-r()
-document.addEventListener("keydown",(e)=>{
-k[e.key.toLowerCase()]=1
-})
-document.addEventListener("keyup",(e)=>{
-k[e.key.toLowerCase()]=0
-})
-</script>
+x.closePath()})
+requestAnimationFrame(r)}
+requestAnimationFrame(ts=>{lt=ts;requestAnimationFrame(r)})
+document.addEventListener("keydown",e=>k[e.key.toLowerCase()]=1)
+document.addEventListener("keyup",e=>k[e.key.toLowerCase()]=0)</script>
