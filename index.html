@@ -1,16 +1,14 @@
 <canvas id="c"><style>body{margin:0}canvas{width:100vw;height:100vh;background-color:rgb(24, 24, 30)}</style><script>let c=document.querySelector("#c"),x=c.getContext("2d"),d=devicePixelRatio*2,k={"w":0,"a":0,"s":0,"d":0},posl=5,pos=Array.from({length:posl},()=>[0,0]),v=[0,0],lt=performance.now()
-const C={ac:3000,dc:3000,mv:750}
+const C={ac:3000,dc:9000,mv:1000}
 c.width=innerWidth*d
 c.height=innerHeight*d
 x.scale(d,d)
 let cl=(v,mn,mx)=>Math.min(Math.max(v,mn),mx)
-let r=(t)=>{let dt=(t-lt)/1000,mvt=[k.d-k.a,k.s-k.w],l=Math.hypot(...mvt)
+let r=(t)=>{let dt=(t-lt)/1000,mvt=[k.d-k.a,k.s-k.w],mag=Math.hypot(...mvt)
 lt=t
-if(l){mvt[0]/=l;mvt[1]/=l;v[0]=cl(v[0]+mvt[0]*C.ac*dt,-C.mv,C.mv);v[1]=cl(v[1]+mvt[1]*C.ac*dt,-C.mv,C.mv)}
+if(mag){mvt[0]/=mag;mvt[1]/=mag;v[0]+=mvt[0]*C.ac*dt;v[1]+=mvt[1]*C.ac*dt;let sp=Math.hypot(...v);if(sp>C.mv){v[0]=v[0]/sp*C.mv;v[1]=v[1]/sp*C.mv}}
 let sp=Math.hypot(...v)
-if(sp){let ns=Math.max(sp-C.dc*dt,0)
-if(!mvt[0])v[0]*=ns/sp
-if(!mvt[1])v[1]*=ns/sp}
+if(sp){let spn=Math.max(sp-C.dc*dt,0);if(!mvt[0])v[0]=v[0]/sp*spn;if(!mvt[1])v[1]=v[1]/sp*spn}
 pos.push([pos[posl-1][0]+v[0]*dt,pos[posl-1][1]+v[1]*dt])
 pos.shift()
 x.clearRect(0,0,innerWidth,innerHeight)
