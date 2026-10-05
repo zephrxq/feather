@@ -1,5 +1,5 @@
 <canvas id="c"><style>body{margin:0}canvas{width:100vw;height:100vh;background-color:rgb(24, 24, 30)}</style><script>let c=document.querySelector("#c"),x=c.getContext("2d"),d=devicePixelRatio*2,k={"w":0,"a":0,"s":0,"d":0},posl=5,pos=Array.from({length:posl},()=>[0,0]),v=[0,0],lt=performance.now()
-const C={ac:3000,dc:9000,mv:1000}
+const C={ac:3000,dc:3000,mv:1000}
 c.width=innerWidth*d
 c.height=innerHeight*d
 x.scale(d,d)
@@ -15,6 +15,8 @@ x.clearRect(0,0,innerWidth,innerHeight)
 pos.forEach((p,i)=>{x.beginPath()
 x.arc(...p,50,0,Math.PI*2)
 x.fillStyle=i+1==posl?"#3498db":`rgba(255,255,255,${1/(posl-i)})`
+x.shadowBlur=50
+x.shadowColor=x.fillStyle
 x.fill()
 x.closePath()})
 requestAnimationFrame(r)}
