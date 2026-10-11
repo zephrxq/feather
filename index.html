@@ -1,9 +1,10 @@
-<canvas id="c"><style>body{margin:0}canvas{width:100vw;height:100vh;background-color:rgb(24, 24, 30)}</style><script>let c=document.querySelector("#c"),x=c.getContext("2d"),d=devicePixelRatio*2,k={"w":0,"a":0,"s":0,"d":0},posl=5,pos=Array.from({length:posl},()=>[0,0]),v=[0,0],lt=performance.now()
-const C={ac:3000,dc:3000,mv:1000}
+<canvas id="c"><style>body{margin:0}canvas{width:100vw;height:100vh;background-color:rgb(24, 24, 30)}</style><script>let c=document.querySelector("#c"),x=c.getContext("2d"),d=devicePixelRatio*2,k={"w":0,"a":0,"s":0,"d":0},posl=5,pos=Array.from({length:posl},()=>[0,0]),v=[0,0],lt=performance.now(),en=[[1000,1000,0]]
+const C={ac:3000,dc:3000,mv:1000,ps:50,es:30,eh:500,emv:800}
 c.width=innerWidth*d
 c.height=innerHeight*d
 x.scale(d,d)
 let cl=(v,mn,mx)=>Math.min(Math.max(v,mn),mx)
+let cc=(axy,a,bxy,b)=>(axy[0]-bxy[0])**2+(axy[1]-bxy[1])**2<=(a+b)**2
 let r=(t)=>{let dt=(t-lt)/1000,mvt=[k.d-k.a,k.s-k.w],mag=Math.hypot(...mvt)
 lt=t
 if(mag){mvt[0]/=mag;mvt[1]/=mag;v[0]+=mvt[0]*C.ac*dt;v[1]+=mvt[1]*C.ac*dt;let sp=Math.hypot(...v);if(sp>C.mv){v[0]=v[0]/sp*C.mv;v[1]=v[1]/sp*C.mv}}
@@ -12,10 +13,25 @@ if(sp){let spn=Math.max(sp-C.dc*dt,0);if(!mvt[0])v[0]=v[0]/sp*spn;if(!mvt[1])v[1
 pos.push([pos[posl-1][0]+v[0]*dt,pos[posl-1][1]+v[1]*dt])
 pos.shift()
 x.clearRect(0,0,innerWidth,innerHeight)
-pos.forEach((p,i)=>{x.beginPath()
-x.arc(...p,50,0,Math.PI*2)
-x.fillStyle=i+1==posl?"#3498db":`rgba(255,255,255,${1/(posl-i)})`
 x.shadowBlur=50
+en.forEach(e=>{if(cc(pos[posl-1],C.ps,e,C.eh)){let dx=pos[posl-1][0]-e[0],dy=pos[posl-1][1]-e[1]
+let dis=Math.hypot(dx,dy)
+e[2]=Math.min(C.emv,e[2]+C.ac*dt)
+if(dis){e[0]+=(dx/dis*e[2])*dt;e[1]+=(dy/dis*e[2])*dt}}else{e[2]=Math.max(0,e[2]-C.dc*dt)}
+x.beginPath()
+x.arc(e[0],e[1],C.es,0,Math.PI*2)
+x.fillStyle="red"
+x.shadowColor=x.fillStyle
+x.fill()
+x.closePath()
+x.beginPath()
+x.arc(e[0],e[1],C.eh,0,Math.PI*2)
+x.strokeStyle="red"
+x.stroke()
+x.closePath()})
+pos.forEach((p,i)=>{x.beginPath()
+x.arc(...p,C.ps,0,Math.PI*2)
+x.fillStyle=i+1==posl?"#3498db":`rgba(255,255,255,${1/(posl-i)})`
 x.shadowColor=x.fillStyle
 x.fill()
 x.closePath()})
