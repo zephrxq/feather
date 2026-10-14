@@ -1,11 +1,11 @@
-<canvas id="c"><style>body{margin:0}canvas{width:100vw;height:100vh;background-color:rgb(24, 24, 30)}</style><script>let c=document.querySelector("#c"),x=c.getContext("2d"),d=devicePixelRatio*2,k={"w":0,"a":0,"s":0,"d":0},posl=5,pos=Array.from({length:posl},()=>[0,0]),v=[0,0],lt=performance.now(),en=[[500,500,0]]
+<canvas id="c"><style>body{margin:0}canvas{width:100vw;height:100vh;background-color:rgb(24, 24, 30)}</style><script>let c=document.querySelector("#c"),x=c.getContext("2d"),d=devicePixelRatio*1.5,k={"w":0,"a":0,"s":0,"d":0},posl=5,pos=Array.from({length:posl},()=>[100,100]),v=[0,0],lt=performance.now(),en=[[500,500,0]],pts=[]
 const C={ac:3000,dc:3000,mv:1000,ps:50,es:50,lw:3,eh:500,emv:800}
 c.width=innerWidth*d
 c.height=innerHeight*d
 x.scale(d,d)
-let cl=(v,mn,mx)=>Math.min(Math.max(v,mn),mx)
-let cc=(axy,a,bxy,b)=>(axy[0]-bxy[0])**2+(axy[1]-bxy[1])**2<=(a+b)**2
-let r=(t)=>{let dt=(t-lt)/1000,mvt=[k.d-k.a,k.s-k.w],mag=Math.hypot(...mvt)
+let rr=(mn,mx)=>Math.floor(Math.random()*(mx-mn+1)+mn)
+let cl=(v,mn,mx)=>Math.min(Math.max(v,mn),mx),cc=(axy,a,bxy,b)=>(axy[0]-bxy[0])**2+(axy[1]-bxy[1])**2<=(a+b)**2,pt=(pn,p,fp)=>{for(let i=0;i<pn;i++)pts.push({...p,...Object.fromEntries(Object.keys(fp).map(k=>[k,fp[k]()]))})},r=(t)=>{x.save()
+let dt=Math.min((t-lt)/1000,0.033),mvt=[k.d-k.a,k.s-k.w],mag=Math.hypot(...mvt)
 lt=t
 if(mag){mvt[0]/=mag;mvt[1]/=mag;v[0]+=mvt[0]*C.ac*dt;v[1]+=mvt[1]*C.ac*dt;let sp=Math.hypot(...v);if(sp>C.mv){v[0]=v[0]/sp*C.mv;v[1]=v[1]/sp*C.mv}}
 let sp=Math.hypot(...v)
@@ -23,20 +23,32 @@ x.arc(e[0],e[1],C.es-(C.lw/2),0,Math.PI*2)
 x.strokeStyle="black"
 x.fillStyle="red"
 x.fill()
-x.stroke()
-x.closePath()})
+x.stroke()})
 pos.forEach((p,i)=>{x.beginPath()
 x.arc(...p,C.ps-(C.lw/2),0,Math.PI*2)
-x.strokeStyle="black"
-x.fillStyle=`rgba(52, 152, 219,${i+1==posl?1:1/2/(posl-i)})`
-x.fill()
+x.strokeStyle=`rgba(0,0,0,${i+1==posl?1:1/(posl-i)})`
+x.fillStyle=`rgba(52,152,219,${i+1==posl?1:1/2/(posl-i)})`
 if(i+1==posl){
-x.shadowBlur=25
-x.shadowColor="#4c86ad"
-x.stroke()}
-x.closePath()})
-x.shadowColor="transparent"
+x.shadowBlur=50
+x.shadowColor="#4c86ad"}
+x.fill()
+x.stroke()})
+let w=0
+for(let i=0;i<pts.length;i++){
+let p=pts[i]
+p.lf-=dt
+if(p.lf<=0)continue
+pts[w++]=p
+p.x+=Math.cos(p.d)*p.sp*dt
+p.y+=Math.sin(p.d)*p.sp*dt
+x.globalAlpha=Math.min(1,p.lf)
+x.beginPath()
+x.arc(p.x,p.y,p.sz,0,Math.PI*2)
+x.fill()}
+pts.length=w
+x.restore()
 requestAnimationFrame(r)}
 requestAnimationFrame(ts=>{lt=ts;requestAnimationFrame(r)})
+pt(100,{x:pos[posl-1][0],y:pos[posl-1][1],sz:5,lf:1,sp:500},{d:()=>rr(0,Math.PI*2)})
 document.addEventListener("keydown",e=>k[e.key.toLowerCase()]=1)
 document.addEventListener("keyup",e=>k[e.key.toLowerCase()]=0)</script>

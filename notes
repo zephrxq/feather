@@ -1,0 +1,2 @@
+amt,mindir,maxdir,x,y[size,color,speed,life]
+x,y,direction,[size,color,speed,life]
