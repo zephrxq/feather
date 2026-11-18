@@ -1,10 +1,10 @@
-<canvas id="c"><style>body{margin:0}canvas{width:100vw;height:100vh;background-color:rgb(24, 24, 30)}</style><script>let c=document.querySelector("#c"),x=c.getContext("2d"),d=devicePixelRatio*1.5,k={"w":0,"a":0,"s":0,"d":0},posl=5,pos=Array.from({length:posl},()=>[0,0]),v=[0,0],lt=performance.now(),en=[[500,500,0]],pts=[],ps=50,b={s:{}}
+<canvas id="c"><style>body{margin:0}canvas{width:100vw;height:100vh;background-color:rgb(24, 24, 30)}</style><script>let c=document.querySelector("#c"),x=c.getContext("2d"),d=devicePixelRatio*1.5,k={"w":0,"a":0,"s":0,"d":0},posl=5,pos=Array.from({length:posl},()=>[0,0]),v=[0,0],lt=performance.now(),en=[[500,500,0]],pb=[],pbs={b:3,cd:0.2},ps=50,b={s:{}},h=100
 const Co={ac:3000,dc:3000,mv:1000,es:50,lw:3,eh:500,emv:800}
 let C={...Co}
 c.width=innerWidth*d
 c.height=innerHeight*d
 x.scale(d,d)
-let rr=(mn,mx)=>Math.random()*(mx-mn)+mn,cl=(v,mn,mx)=>Math.min(Math.max(v,mn),mx),cc=(axy,a,bxy,b)=>(axy[0]-bxy[0])**2+(axy[1]-bxy[1])**2<=(a+b)**2,pt=(pn,p,fp)=>{for(let i=0;i<pn;i++)pts.push({...p,...Object.fromEntries(Object.keys(fp).map(k=>[k,fp[k]()]))})},r=(t)=>{x.save()
+let rr=(mn,mx)=>Math.random()*(mx-mn)+mn,cl=(v,mn,mx)=>Math.min(Math.max(v,mn),mx),cc=(axy,a,bxy,b)=>(axy[0]-bxy[0])**2+(axy[1]-bxy[1])**2<=(a+b)**2,pt=(pn,p,fp)=>{for(let i=0;i<pn;i++)pb.push({...p,...Object.fromEntries(Object.keys(fp).map(k=>[k,fp[k](i)]))})},r=(t)=>{x.save()
 let dt=Math.min((t-lt)/1000,0.033),mvt=[k.d-k.a,k.s-k.w],mag=Math.hypot(...mvt)
 lt=t
 if(mag){mvt[0]/=mag;mvt[1]/=mag;v[0]+=mvt[0]*C.ac*dt;v[1]+=mvt[1]*C.ac*dt;let sp=Math.hypot(...v);if(sp>C.mv){v[0]=v[0]/sp*C.mv;v[1]=v[1]/sp*C.mv}}
@@ -27,18 +27,20 @@ x.stroke()})
 let w=0
 x.shadowBlur=25
 x.shadowColor="#4c86ad"
-for(let i=0;i<pts.length;i++){
-let p=pts[i]
+for(let i=0;i<pb.length;i++){
+let p=pb[i]
 p.lf-=dt
 if(p.lf<=0)continue
-pts[w++]=p
+pb[w++]=p
 p.x+=Math.cos(p.d)*p.sp*dt
 p.y+=Math.sin(p.d)*p.sp*dt
+x.strokeStyle="black"
 x.fillStyle=`rgba(52,152,219,${Math.min(1,p.lf*2)})`
 x.beginPath()
 x.arc(p.x,p.y,p.sz,0,Math.PI*2)
-x.fill()}
-pts.length=w
+x.fill()
+x.stroke()}
+pb.length=w
 x.shadowBlur=50
 pos.forEach((p,i)=>{x.beginPath()
 x.arc(...p,ps-(C.lw/2),0,Math.PI*2)
@@ -48,11 +50,9 @@ x.fill()
 x.stroke()})
 x.restore()
 Object.entries(b).forEach(([bk])=>{bk=b[bk];bk.cd=(bk.cd??0)-dt;bk.t=(bk.t??0)-dt})
-if(k[" "]&&b.s.cd<=0){b.s={cd:10,t:5}
-C.mv=1500;C.ac=4500;C.dc=4500}
-let ld=Math.atan2(pos[posl-1][1]-pos[posl-2][1],pos[posl-1][0]-pos[posl-2][0])
-if(b.s.t>0){if(v[0]||v[1])pt(5,{x:pos[posl-1][0],y:pos[posl-1][1],sz:5,sp:500},{d:()=>rr(ld-0.3,ld+0.3),lf:()=>rr(0,1)})}else{C={...Co};if(v[0]||v[1])pt(1,{x:pos[posl-1][0],y:pos[posl-1][1],sz:5,sp:500},{d:()=>rr(ld-0.3,ld+0.3),lf:()=>rr(0,1)})}
+if(k.cl){let mp=Math.atan2(k.cl.y-pos[posl-1][1],k.cl.x-pos[posl-1][0]);b.s.cd=pbs.cd;pt(pbs.b,{x:pos[posl-1][0],y:pos[posl-1][1],sz:15,sp:1000,lf:1},{d:()=>rr(mp-0.2,mp+0.2)});k.cl=0}
 requestAnimationFrame(r)}
 requestAnimationFrame(ts=>{lt=ts;requestAnimationFrame(r)})
 document.addEventListener("keydown",e=>{k[e.key.toLowerCase()]=1})
-document.addEventListener("keyup",e=>k[e.key.toLowerCase()]=0)</script>
+document.addEventListener("keyup",e=>k[e.key.toLowerCase()]=0)
+document.addEventListener("mousedown",e=>{if(b.s.cd<=0)k.cl=e})</script>
