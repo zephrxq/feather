@@ -1,10 +1,19 @@
-<canvas id="c"><style>body{margin:0}canvas{width:100vw;height:100vh;background-color:rgb(24, 24, 30)}</style><script>let c=document.querySelector("#c"),x=c.getContext("2d"),d=devicePixelRatio*1.5,k={"w":0,"a":0,"s":0,"d":0},posl=5,pos=Array.from({length:posl},()=>[0,0]),v=[0,0],lt=performance.now(),en=[[500,500,0]],pb=[],pbs={b:3,cd:0.2},ps=50,b={s:{}},h=100
+<div id="r"><div><h2>Upgrade attack speed</h2></div><div><h2>Upgrade bullet count</h2><p></p></div><div><h2>Upgrade damage</h2></div></div><canvas id="c"></canvas><style>*{box-sizing:border-box}body{margin:0;overflow:hidden}canvas{position:fixed;inset:0;width:100vw;height:100vh;background:rgb(24,24,30)}#r{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;gap:20px;z-index:1}#r>div{width:16.666vw;height:50vh;background:rgb(5,12,70);border-radius:12px;color:white;text-align:center}</style><script>let c=document.querySelector("#c"),x=c.getContext("2d"),d=devicePixelRatio*1.5,k={"w":0,"a":0,"s":0,"d":0},posl=5,pos=Array.from({length:posl},()=>[0,0]),v=[0,0],lt=performance.now(),en=[],pb=[],pbs={b:1,cd:1,s:10,d:0.5},ps=50,b={s:{}},h=100,ac=new AudioContext(),st=0,ph=0,ud=document.querySelectorAll("a"),up=document.querySelector("#r")
 const Co={ac:3000,dc:3000,mv:1000,es:50,lw:3,eh:500,emv:800}
 let C={...Co}
 c.width=innerWidth*d
 c.height=innerHeight*d
 x.scale(d,d)
-let rr=(mn,mx)=>Math.random()*(mx-mn)+mn,cl=(v,mn,mx)=>Math.min(Math.max(v,mn),mx),cc=(axy,a,bxy,b)=>(axy[0]-bxy[0])**2+(axy[1]-bxy[1])**2<=(a+b)**2,pt=(pn,p,fp)=>{for(let i=0;i<pn;i++)pb.push({...p,...Object.fromEntries(Object.keys(fp).map(k=>[k,fp[k](i)]))})},r=(t)=>{x.save()
+let rr=(mn,mx)=>Math.random()*(mx-mn)+mn,cl=(v,mn,mx)=>Math.min(Math.max(v,mn),mx),cc=(axy,a,bxy,b)=>(axy[0]-bxy[0])**2+(axy[1]-bxy[1])**2<=(a+b)**2,pt=(pn,p,fp)=>{for(let i=0;i<pn;i++)pb.push({...p,...Object.fromEntries(Object.keys(fp).map(k=>[k,fp[k](i)]))})},po=(v)=>{
+let bf=ac.createBuffer(1,ac.sampleRate * 0.1,ac.sampleRate),bd=bf.getChannelData(0);
+for(let i=0;i<bd.length;i++) {const t=i/ac.sampleRate;bd[i]=(Math.random()*2-1)*Math.exp(-t*60)}
+let sc=ac.createBufferSource(),g=ac.createGain()
+sc.buffer=bf
+g.gain.value=0.8;sc.playbackRate.value=v
+sc.connect(g)
+g.connect(ac.destination)
+sc.start()
+},r=(t)=>{x.save()
 let dt=Math.min((t-lt)/1000,0.033),mvt=[k.d-k.a,k.s-k.w],mag=Math.hypot(...mvt)
 lt=t
 if(mag){mvt[0]/=mag;mvt[1]/=mag;v[0]+=mvt[0]*C.ac*dt;v[1]+=mvt[1]*C.ac*dt;let sp=Math.hypot(...v);if(sp>C.mv){v[0]=v[0]/sp*C.mv;v[1]=v[1]/sp*C.mv}}
@@ -14,6 +23,8 @@ pos.push([pos[posl-1][0]+v[0]*dt,pos[posl-1][1]+v[1]*dt])
 pos.shift()
 x.clearRect(0,0,innerWidth,innerHeight)
 x.lineWidth=C.lw
+if(en.length==0)ph=0
+if(ph==0){up.style.display="flex";if(k["1"]){pbs.cd-=0.1;ph=1}if(k["2"]){pbs.b+=1;ph=1}if(k["3"]){pbs.d+=0.5;ph=1}if(ph==1){st+=1;up.style.display="none";en=Array.from({length:st},()=>[...[rr(0,innerWidth),rr(0,innerHeight),0,1]]);}}
 en.forEach(e=>{if(cc(pos[posl-1],ps,e,C.eh)){let dx=pos[posl-1][0]-e[0],dy=pos[posl-1][1]-e[1]
 let dis=Math.hypot(dx,dy)
 e[2]=Math.min(C.emv,e[2]+C.ac*dt)
@@ -25,17 +36,23 @@ x.fillStyle="red"
 x.fill()
 x.stroke()})
 let w=0
-x.shadowBlur=25
+x.shadowBlur=50
 x.shadowColor="#4c86ad"
 for(let i=0;i<pb.length;i++){
-let p=pb[i]
+let p=pb[i],kp=1
 p.lf-=dt
-if(p.lf<=0)continue
-pb[w++]=p
-p.x+=Math.cos(p.d)*p.sp*dt
+if(p.lf>0){p.x+=Math.cos(p.d)*p.sp*dt
 p.y+=Math.sin(p.d)*p.sp*dt
+en.forEach((e,i)=>{if(cc(e.slice(0,2),Co.es,[p.x,p.y],p.sz)){kp=0;e[3]-=pbs.d;if(e[3]<1)en.splice(i,1)}})}else kp=0
+if(kp)pb[w++]=p;else{x.strokeStyle="rgba(52,152,219,1)";for(let i=0;i<6;i++){let an=(i/6)*Math.PI*2+rr(0,1)
+let sx=p.x+Math.cos(an)*p.sz,sy=p.y+Math.sin(an)*p.sz,ex=p.x+Math.cos(an)*(p.sz+rr(25,30)),ey=p.y+Math.sin(an)*(p.sz+30)
+x.beginPath()
+x.moveTo(sx,sy)
+x.lineTo(ex,ey)
+x.stroke()
+po(rr(0.5,1.5))}continue}
 x.strokeStyle="black"
-x.fillStyle=`rgba(52,152,219,${Math.min(1,p.lf*2)})`
+x.fillStyle=`rgba(52,152,219)`
 x.beginPath()
 x.arc(p.x,p.y,p.sz,0,Math.PI*2)
 x.fill()
@@ -50,7 +67,7 @@ x.fill()
 x.stroke()})
 x.restore()
 Object.entries(b).forEach(([bk])=>{bk=b[bk];bk.cd=(bk.cd??0)-dt;bk.t=(bk.t??0)-dt})
-if(k.cl){let mp=Math.atan2(k.cl.y-pos[posl-1][1],k.cl.x-pos[posl-1][0]);b.s.cd=pbs.cd;pt(pbs.b,{x:pos[posl-1][0],y:pos[posl-1][1],sz:15,sp:1000,lf:1},{d:()=>rr(mp-0.2,mp+0.2)});k.cl=0}
+if(k.cl){let mp=Math.atan2(k.cl.y-pos[posl-1][1],k.cl.x-pos[posl-1][0]);b.s.cd=pbs.cd;pt(pbs.b,{x:pos[posl-1][0],y:pos[posl-1][1],sz:pbs.s,sp:1000},{lf:()=>rr(0.5,1),d:()=>rr(mp-0.1*pbs.b,mp+0.1*pbs.b)});k.cl=0}
 requestAnimationFrame(r)}
 requestAnimationFrame(ts=>{lt=ts;requestAnimationFrame(r)})
 document.addEventListener("keydown",e=>{k[e.key.toLowerCase()]=1})
