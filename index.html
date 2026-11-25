@@ -1,12 +1,11 @@
-<div id="m"><h1>Click to shoot, press WASD to move, press 123 for upgrades.</h1><button onclick="document.querySelector('#m').style.display='none'">Play</button></div><h2 id="s">Stage 1</h2><div id="r"><div><h2>1. Upgrade attack speed</h2><p>-0.1s cooldown</p></div><div><h2>2. Upgrade bullet count</h2><p>+1 bullet</p></div><div><h2>3. Upgrade damage</h2><p>+1 damage</p></div></div><canvas id="c"></canvas><style>*{box-sizing:border-box;text-align:center}body{margin:0;overflow:hidden}h1,h2,p{color:white}#s{z-index:1;width: 100%;position:absolute;top:0}canvas{position:fixed;inset:0;width:100vw;height:100vh;background:rgb(24,24,30)}#m{height:100vh;width:100vw;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:5;position:absolute;background-color:black}#r{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;gap:20px;z-index:1}#r>div{width:16.666vw;height:50vh;background:rgb(5,12,70);border-radius:12px;padding:8px}</style><script>let c=document.querySelector("#c"),x=c.getContext("2d"),d=devicePixelRatio*1.5,k={"w":0,"a":0,"s":0,"d":0},posl=5,pos=Array.from({length:posl},()=>[0,0]),v=[0,0],lt=performance.now(),en=[],pb=[],pbs={b:1,cd:1,s:10,d:0.5},ps=50,b={s:{}},h=100,ac=new AudioContext(),st=0,ph=0,up=document.querySelector("#r"),se=document.querySelector("#s"),m=document.querySelector("#m")
+<div id="m"><h1>Click to shoot, press WASD to move, press 123 for upgrades.</h1><button onclick="document.querySelector('#m').style.display='none'">Play</button></div><h2 id="s">Stage 1</h2><div id="r"><div><h2>1. Upgrade attack speed</h2><p>-0.1s cooldown</p></div><div><h2>2. Upgrade bullet count</h2><p>+1 bullet</p></div><div><h2>3. Upgrade damage</h2><p>+1 damage</p></div></div><canvas id="c"></canvas><style>*{box-sizing:border-box;text-align:center}body{margin:0;overflow:hidden}h1,h2,p{color:white}#s{z-index:1;width: 100%;position:absolute;top:0}canvas{position:fixed;inset:0;width:100vw;height:100vh;background:rgb(24,24,30)}#m{height:100vh;width:100vw;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:5;position:absolute;background-color:black}#r{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;gap:20px;z-index:1}#r>div{width:16.666vw;height:50vh;background:rgb(5,12,70);border-radius:12px;padding:8px}</style><script>let c=document.querySelector("#c"),x=c.getContext("2d"),d=devicePixelRatio*1.5,k={"w":0,"a":0,"s":0,"d":0},posl=5,pos=Array.from({length:posl},()=>[0,0]),v=[0,0],lt=performance.now(),en=[],pb=[],pbs={b:3,cd:1,s:10,d:0.5},ps=50,b={s:{}},h=100,ac=new AudioContext(),bf=ac.createBuffer(1,ac.sampleRate*0.1,ac.sampleRate),bd=bf.getChannelData(0),st=0,ph=0,up=document.querySelector("#r"),se=document.querySelector("#s"),m=document.querySelector("#m")
+for(let i=0;i<bd.length;i++) {const t=i/ac.sampleRate;bd[i]=(Math.random()*2-1)*Math.exp(-t*60)}
 const Co={ac:3000,dc:3000,mv:1000,es:50,lw:3,eh:500,emv:800}
 let C={...Co}
 c.width=innerWidth*d
 c.height=innerHeight*d
 x.scale(d,d)
 let rr=(mn,mx)=>Math.random()*(mx-mn)+mn,cl=(v,mn,mx)=>Math.min(Math.max(v,mn),mx),cc=(axy,a,bxy,b)=>(axy[0]-bxy[0])**2+(axy[1]-bxy[1])**2<=(a+b)**2,pt=(pn,p,fp)=>{for(let i=0;i<pn;i++)pb.push({...p,...Object.fromEntries(Object.keys(fp).map(k=>[k,fp[k](i)]))})},po=(v)=>{
-let bf=ac.createBuffer(1,ac.sampleRate * 0.1,ac.sampleRate),bd=bf.getChannelData(0);
-for(let i=0;i<bd.length;i++) {const t=i/ac.sampleRate;bd[i]=(Math.random()*2-1)*Math.exp(-t*60)}
 let sc=ac.createBufferSource(),g=ac.createGain()
 sc.buffer=bf
 g.gain.value=0.8;sc.playbackRate.value=v
@@ -37,14 +36,13 @@ x.fillStyle="red"
 x.fill()
 x.stroke()})
 let w=0
-x.shadowBlur=50
 x.shadowColor="#4c86ad"
 for(let i=0;i<pb.length;i++){
 let p=pb[i],kp=1
 p.lf-=dt
 if(p.lf>0){p.x+=Math.cos(p.d)*p.sp*dt
 p.y+=Math.sin(p.d)*p.sp*dt
-en.forEach((e,i)=>{if(cc(e.slice(0,2),Co.es,[p.x,p.y],p.sz)){kp=0;e[3]-=pbs.d;if(e[3]<1)en.splice(i,1)}})}else kp=0
+en.forEach((e,i)=>{if(cc(e.slice(0,2),Co.es,[p.x,p.y],p.sz)){kp=0;e[3]-=pbs.d;if(e[3]<1)en.splice(i,1);return}})}else kp=0
 if(kp)pb[w++]=p;else{x.strokeStyle="rgba(52,152,219,1)";for(let i=0;i<6;i++){let an=(i/6)*Math.PI*2+rr(0,1)
 let sx=p.x+Math.cos(an)*p.sz,sy=p.y+Math.sin(an)*p.sz,ex=p.x+Math.cos(an)*(p.sz+rr(25,30)),ey=p.y+Math.sin(an)*(p.sz+30)
 x.beginPath()
